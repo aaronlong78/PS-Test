@@ -1,0 +1,20 @@
+<template>
+    <div class="lookup">
+        <input type="text" class="slds-input" value={inputValue} placeholder="Search role…"
+            onfocus={handleFocus} oninput={handleInput} onblur={handleBlur} />
+        <template if:true={open}>
+            <ul class="dropdown" role="listbox">
+                <template for:each={results} for:item="r">
+                    <li key={r.productId} data-id={r.productId} class="item" role="option"
+                        onmousedown={handleSelect}>
+                        <span class="name">{r.name}</span>
+                        <span class="rate">${r.rate}/hr</span>
+                    </li>
+                </template>
+                <template if:true={noResults}>
+                    <li class="item muted">No matching roles</li>
+                </template>
+            </ul>
+        </template>
+    </div>
+</template>

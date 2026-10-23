@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Target_Margin_Pct__c</fullName>
+    <label>Target Margin %</label>
+    <description>Target gross margin used by the builder's profitability panel.</description>
+    <fieldManageability>SubscriberControlled</fieldManageability>
+    <precision>5</precision>
+    <scale>2</scale>
+    <required>false</required>
+    <type>Percent</type>
+</CustomField>

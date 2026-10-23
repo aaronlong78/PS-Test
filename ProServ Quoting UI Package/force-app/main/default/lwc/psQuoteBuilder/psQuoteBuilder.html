@@ -1,0 +1,295 @@
+<template>
+    <lightning-card title="Professional Services Quote Builder" icon-name="standard:quotes">
+        <span slot="footer" class="slds-text-color_weak slds-text-body_small">PS Quote Builder • build 9</span>
+        <div class="slds-p-horizontal_medium">
+
+            <!-- No-context notice -->
+            <template if:true={noContext}>
+                <div class="slds-box slds-theme_warning slds-m-bottom_small">
+                    Place this component on a <b>Quote</b> record page. The quote (created from the Account
+                    via Quick Quote) supplies the Opportunity and Account for the estimate.
+                </div>
+            </template>
+
+            <!-- Quote context (read-only, from the current Quote) -->
+            <template if:true={hasContext}>
+                <div class="context slds-m-bottom_small">
+                    <span class="context-item"><span class="context-label">Quote</span>{quoteName}</span>
+                    <span class="context-item"><span class="context-label">Opportunity</span>{opportunityName}</span>
+                    <span class="context-item"><span class="context-label">Account</span>{accountName}</span>
+                </div>
+
+                <div class="slds-grid slds-wrap slds-gutters_x-small slds-m-bottom_small">
+                    <!-- Global Roles & Rates (one negotiated rate per role, applied across all phases) -->
+                    <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-2 slds-p-bottom_x-small">
+                        <div class="slds-box slds-box_x-small header-box">
+                            <div class="slds-text-title_caps slds-m-bottom_x-small">Roles &amp; Rates</div>
+                            <template if:false={hasRoles}>
+                                <div class="slds-text-color_weak slds-text-body_small">
+                                    Add a role to a phase below, then set its negotiated hourly rate here.
+                                </div>
+                            </template>
+                            <template if:true={hasRoles}>
+                                <table class="slds-table slds-table_bordered slds-table_cell-buffer roles-grid">
+                                    <thead>
+                                        <tr class="slds-line-height_reset">
+                                            <th class="role-col">Role</th>
+                                            <th class="num">List</th>
+                                            <th class="num">Negotiated Rate ($/hr)</th>
+                                            <th class="num">Cost/hr</th>
+                                            <th class="num">Margin</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <template for:each={roleRates} for:item="role">
+                                            <tr key={role.productId}>
+                                                <td class="role-col">{role.roleName}</td>
+                                                <td class="num muted">{role.listRateDisplay}</td>
+                                                <td class="num">
+                                                    <input type="number" min="0" step="1" class="rate"
+                                                        value={role.rate} data-product={role.productId}
+                                                        onchange={handleRoleRate} />
+                                                </td>
+                                                <td class="num muted">{role.costDisplay}</td>
+                                                <td class="num"><span class={role.marginClass}>{role.marginDisplay}</span></td>
+                                            </tr>
+                                        </template>
+                                    </tbody>
+                                </table>
+                            </template>
+                        </div>
+                    </div>
+
+                    <!-- Profitability estimator (negotiated rate vs cost book hourly cost) -->
+                    <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-2 slds-p-bottom_x-small">
+                        <div class="slds-box slds-box_x-small header-box">
+                            <div class="slds-grid slds-grid_vertical-align-center slds-m-bottom_x-small">
+                                <div class="slds-col slds-text-title_caps">Profitability</div>
+                                <div class="slds-col slds-grow-none target-wrap">
+                                    <span class="muted">Target margin</span>
+                                    <input type="number" min="0" max="99" step="1" class="rate"
+                                        value={targetMargin} onchange={handleTargetMargin} />
+                                    <span class="muted">%</span>
+                                </div>
+                            </div>
+
+                            <template if:false={hasCostBook}>
+                                <div class="slds-text-color_error slds-text-body_small slds-m-bottom_x-small">
+                                    No cost book configured. Mark a Cost Book as default (or set its name in
+                                    PS Quote Settings) to estimate margin.
+                                </div>
+                            </template>
+
+                            <div class="kpis">
+                                <div class="kpi">
+                                    <div class="kpi-label">Revenue</div>
+                                    <div class="kpi-value">{profitability.revenueDisplay}</div>
+                                </div>
+                                <div class="kpi">
+                                    <div class="kpi-label">Cost</div>
+                                    <div class="kpi-value">{profitability.costDisplay}</div>
+                                </div>
+                                <div class="kpi">
+                                    <div class="kpi-label">Gross Margin</div>
+                                    <div class="kpi-value">{profitability.marginDisplay}</div>
+                                </div>
+                                <div class="kpi">
+                                    <div class="kpi-label">Margin %</div>
+                                    <div class={profitability.marginClass}>{profitability.marginPctDisplay}</div>
+                                </div>
+                            </div>
+
+                            <template if:true={profitability.hasDiscount}>
+                                <div class="slds-text-body_small muted slds-m-top_x-small">
+                                    Discount vs list: {profitability.discountDisplay} ({profitability.discountPctDisplay})
+                                </div>
+                            </template>
+
+                            <template if:true={hasRoles}>
+                                <table class="slds-table slds-table_bordered slds-table_cell-buffer roles-grid slds-m-top_x-small">
+                                    <thead>
+                                        <tr class="slds-line-height_reset">
+                                            <th>Role</th>
+                                            <th class="num">Hours</th>
+                                            <th class="num">Revenue</th>
+                                            <th class="num">Cost</th>
+                                            <th class="num">Margin</th>
+                                            <th class="num" title="Lowest rate that still meets the target margin">Target Rate</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <template for:each={roleRates} for:item="role">
+                                            <tr key={role.productId}>
+                                                <td>{role.roleName}</td>
+                                                <td class="num">{role.hours}</td>
+                                                <td class="num">{role.revenueDisplay}</td>
+                                                <td class="num">{role.rowCostDisplay}</td>
+                                                <td class="num"><span class={role.marginClass}>{role.marginDisplay}</span></td>
+                                                <td class="num muted">{role.targetRateDisplay}</td>
+                                            </tr>
+                                        </template>
+                                    </tbody>
+                                </table>
+                            </template>
+
+                            <template if:true={profitability.hasMissing}>
+                                <div class="slds-text-body_small slds-text-color_error slds-m-top_x-small">
+                                    No cost in {costBookName}: {profitability.missingDisplay}. Margin excludes these roles.
+                                </div>
+                            </template>
+                            <template if:true={hasCostBook}>
+                                <div class="slds-text-body_small muted slds-m-top_xx-small">Cost book: {costBookName}</div>
+                            </template>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Phases -->
+                <template for:each={phaseViews} for:item="phase">
+                    <div key={phase.id} class="phase slds-box slds-box_x-small slds-m-bottom_small">
+                        <div class="slds-grid slds-gutters slds-grid_vertical-align-end slds-m-bottom_x-small">
+                            <div class="slds-col">
+                                <lightning-input label="Phase" value={phase.name} data-role="phase-name"
+                                    data-phase={phase.id} onchange={handlePhaseName}></lightning-input>
+                            </div>
+                            <div class="slds-col">
+                                <lightning-input type="date" label="Start (week 1)" value={phase.startDate}
+                                    data-role="phase-start" data-phase={phase.id} onchange={handlePhaseStart}></lightning-input>
+                            </div>
+                            <div class="slds-col slds-text-align_right slds-grow-none">
+                                <lightning-button-group>
+                                    <lightning-button label="Add Week" icon-name="utility:add"
+                                        data-phase={phase.id} onclick={addWeek}></lightning-button>
+                                    <lightning-button label="Remove Week" icon-name="utility:dash"
+                                        data-phase={phase.id} onclick={removeWeek}></lightning-button>
+                                    <lightning-button label="Add Resource" icon-name="utility:adduser"
+                                        data-phase={phase.id} onclick={addResource}></lightning-button>
+                                    <lightning-button label="Remove Phase" variant="destructive-text"
+                                        icon-name="utility:delete" data-phase={phase.id} onclick={removePhase}></lightning-button>
+                                </lightning-button-group>
+                            </div>
+                        </div>
+
+                        <!-- Bulk hours toolbar -->
+                        <div class="bulk-bar slds-m-bottom_x-small">
+                            <span class="bulk-label">Bulk apply</span>
+                            <input type="number" min="0" step="1" class="bulk-hrs" placeholder="hrs"
+                                value={phase.bulkHours} data-phase={phase.id} onchange={handleBulkHours} />
+                            <span class="bulk-word">hours to</span>
+                            <lightning-combobox class="bulk-target" variant="label-hidden" value={phase.bulkTarget}
+                                options={phase.bulkOptions} data-phase={phase.id} onchange={handleBulkTarget}></lightning-combobox>
+                            <span class="bulk-word">for checked resources</span>
+                            <lightning-button label="Apply" icon-name="utility:apex" data-phase={phase.id}
+                                onclick={applyBulk}></lightning-button>
+                        </div>
+
+                        <div class="grid-scroll">
+                            <table class="slds-table slds-table_bordered slds-table_cell-buffer grid">
+                                <thead>
+                                    <tr class="slds-line-height_reset">
+                                        <th class="sel">
+                                            <input type="checkbox" checked={phase.allSelected}
+                                                data-phase={phase.id} onchange={toggleSelectAll} title="Select all" />
+                                        </th>
+                                        <th class="role-col">Role</th>
+                                        <th class="num">Rate</th>
+                                        <template for:each={phase.weekHeaders} for:item="h">
+                                            <th key={h.key} class="num week">
+                                                <div>{h.label}</div>
+                                                <div class="range">{h.range}</div>
+                                            </th>
+                                        </template>
+                                        <th class="num">Hours</th>
+                                        <th class="num">Cost</th>
+                                        <th class="del"></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <template for:each={phase.rows} for:item="row">
+                                        <tr key={row.id}>
+                                            <td class="sel">
+                                                <input type="checkbox" checked={row.selected}
+                                                    data-phase={phase.id} data-res={row.id} onchange={toggleResource} />
+                                            </td>
+                                            <td class="role-col">
+                                                <c-ps-role-lookup selected-label={row.roleName}
+                                                    data-phase={phase.id} data-res={row.id}
+                                                    onselect={handleRoleSelect}></c-ps-role-lookup>
+                                            </td>
+                                            <td class="num rate-cell">{row.rateDisplay}</td>
+                                            <template for:each={row.cells} for:item="cell">
+                                                <td key={cell.key} class="num">
+                                                    <input type="number" min="0" step="1" class="hrs" value={cell.value}
+                                                        data-phase={phase.id} data-res={row.id} data-week={cell.week}
+                                                        onchange={handleHours} />
+                                                </td>
+                                            </template>
+                                            <td class="num bold">{row.rowHours}</td>
+                                            <td class="num bold">{row.rowCostDisplay}</td>
+                                            <td class="del">
+                                                <lightning-button-icon icon-name="utility:delete" variant="bare"
+                                                    alternative-text="Remove resource" data-phase={phase.id}
+                                                    data-res={row.id} onclick={removeResource}></lightning-button-icon>
+                                            </td>
+                                        </tr>
+                                    </template>
+                                    <tr class="totals">
+                                        <td class="sel"></td>
+                                        <td class="role-col bold">Weekly total</td>
+                                        <td></td>
+                                        <template for:each={phase.colTotals} for:item="t">
+                                            <td key={t.key} class="num">
+                                                <div class="bold">{t.hours}h</div>
+                                                <div class="range">{t.costDisplay}</div>
+                                            </td>
+                                        </template>
+                                        <td class="num bold">{phase.phaseHours}</td>
+                                        <td class="num bold">{phase.phaseCostDisplay}</td>
+                                        <td class="del"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </template>
+
+                <div class="slds-m-vertical_small">
+                    <lightning-button label="Add Phase" icon-name="utility:add" onclick={addPhase}></lightning-button>
+                </div>
+
+                <!-- Footer: grand total + generate -->
+                <div class="slds-grid slds-grid_vertical-align-center slds-m-top_medium summary">
+                    <div class="slds-col">
+                        <span class="total-label">Estimated contract value</span>
+                        <span class="total-value">{grandTotalDisplay}</span>
+                        <span class="total-hours">({grandHours} hrs)</span>
+                        <span class="total-margin">Margin <span class={profitability.badgeClass}>{profitability.marginPctDisplay}</span></span>
+                    </div>
+                    <div class="slds-col slds-text-align_right">
+                        <lightning-button variant="brand" label="Save Estimate to Quote"
+                            icon-name="utility:save" disabled={building} onclick={generate}></lightning-button>
+                    </div>
+                </div>
+
+                <template if:true={building}>
+                    <div class="slds-m-top_small slds-text-color_weak">
+                        <lightning-spinner alternative-text="Saving estimate" size="small"></lightning-spinner>
+                        Writing $0 monthly resource lines with negotiated usage rates to this quote…
+                    </div>
+                </template>
+
+                <template if:true={result}>
+                    <div class="slds-box slds-theme_success slds-m-top_small">
+                        Saved <b>{result.lineCount}</b> resource line(s) at $0/mo with negotiated usage rates;
+                        <b>{result.segmentCount}</b> estimate rows.
+                        <template if:true={resultMarginDisplay}>
+                            Estimated margin <b>{resultMarginDisplay}</b> saved to the quote.
+                        </template>
+                        <lightning-button variant="success" label="Open Quote" icon-name="utility:new_window"
+                            class="slds-m-left_small" onclick={openQuote}></lightning-button>
+                    </div>
+                </template>
+            </template>
+        </div>
+    </lightning-card>
+</template>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <deploymentStatus>Deployed</deploymentStatus>
+    <description>Stores the psQuoteBuilder weekly ramp estimate (one row per resource-week) for a PS quote so the LWC can rebuild the estimate grid when an existing quote is reopened. Not used by any pricing procedure.</description>
+    <enableActivities>false</enableActivities>
+    <enableBulkApi>true</enableBulkApi>
+    <enableFeeds>false</enableFeeds>
+    <enableHistory>false</enableHistory>
+    <enableReports>true</enableReports>
+    <enableSearch>false</enableSearch>
+    <enableSharing>true</enableSharing>
+    <enableStreamingApi>true</enableStreamingApi>
+    <label>PS Estimate Segment</label>
+    <nameField>
+        <displayFormat>ES-{00000000}</displayFormat>
+        <label>Estimate Segment #</label>
+        <type>AutoNumber</type>
+    </nameField>
+    <pluralLabel>PS Estimate Segments</pluralLabel>
+    <sharingModel>ReadWrite</sharingModel>
+    <visibility>Public</visibility>
+</CustomObject>

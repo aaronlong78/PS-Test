@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Estimated_Hours__c</fullName>
+    <label>Estimated Hours</label>
+    <description>Total estimated hours for this resource captured by psQuoteBuilder. Reference only - not used in any pricing procedure.</description>
+    <precision>8</precision>
+    <scale>2</scale>
+    <required>false</required>
+    <type>Number</type>
+    <unique>false</unique>
+</CustomField>

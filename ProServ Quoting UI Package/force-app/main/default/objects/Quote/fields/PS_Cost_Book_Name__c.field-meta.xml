@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>PS_Cost_Book_Name__c</fullName>
+    <label>PS Cost Book</label>
+    <description>Name of the cost book used for the saved estimate (text snapshot, portable across orgs).</description>
+    <length>255</length>
+    <required>false</required>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

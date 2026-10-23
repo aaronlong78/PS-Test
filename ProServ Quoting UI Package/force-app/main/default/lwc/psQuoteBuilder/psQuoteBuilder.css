@@ -1,0 +1,250 @@
+.grid-scroll {
+    /* visible (not auto) so the role lookup dropdown is never clipped */
+    overflow: visible;
+}
+
+.context {
+    display: flex;
+    gap: 2rem;
+    padding: 0.35rem 0.75rem;
+    background: #f3f6f9;
+    border-radius: 6px;
+}
+
+.context-item {
+    display: flex;
+    flex-direction: column;
+    font-weight: 600;
+    color: #181818;
+}
+
+.context-label {
+    font-size: 0.7rem;
+    font-weight: 400;
+    color: #6b6d70;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+table.grid {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+table.grid th,
+table.grid td {
+    padding: 2px 6px;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+
+table.grid th.num,
+table.grid td.num {
+    text-align: right;
+}
+
+table.roles-grid {
+    width: auto;
+    min-width: 360px;
+    border-collapse: collapse;
+}
+
+table.roles-grid th,
+table.roles-grid td {
+    padding: 2px 8px;
+    white-space: nowrap;
+}
+
+table.roles-grid th.num,
+table.roles-grid td.num {
+    text-align: right;
+}
+
+td.rate-cell {
+    color: #444;
+}
+
+.role-col {
+    min-width: 220px;
+    text-align: left;
+}
+
+th.week .range,
+td .range {
+    font-size: 0.7rem;
+    color: #6b6d70;
+    font-weight: 400;
+}
+
+.hrs,
+.rate {
+    width: 56px;
+    text-align: right;
+    border: 1px solid #c9c9c9;
+    border-radius: 4px;
+    padding: 2px 4px;
+}
+
+.rate {
+    width: 72px;
+}
+
+.hrs:focus,
+.rate:focus {
+    border-color: #1b96ff;
+    outline: none;
+    box-shadow: 0 0 2px #1b96ff;
+}
+
+.bold {
+    font-weight: 700;
+}
+
+tr.totals {
+    background: #f3f3f3;
+}
+
+.del {
+    width: 36px;
+    text-align: center;
+}
+
+.sel {
+    width: 32px;
+    text-align: center;
+}
+
+.bulk-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.4rem 0.6rem;
+    background: #eef4ff;
+    border: 1px solid #d8e3f8;
+    border-radius: 6px;
+    flex-wrap: wrap;
+}
+
+.bulk-label {
+    font-weight: 700;
+    color: #032d60;
+}
+
+.bulk-word {
+    color: #444;
+}
+
+.bulk-hrs {
+    width: 64px;
+    text-align: right;
+    border: 1px solid #c9c9c9;
+    border-radius: 4px;
+    padding: 3px 6px;
+}
+
+.bulk-target {
+    min-width: 130px;
+}
+
+.summary {
+    border-top: 2px solid #e5e5e5;
+    padding-top: 0.5rem;
+}
+
+.total-label {
+    color: #6b6d70;
+    margin-right: 0.5rem;
+}
+
+.total-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #181818;
+}
+
+.total-hours {
+    color: #6b6d70;
+    margin-left: 0.5rem;
+}
+
+.total-margin {
+    color: #6b6d70;
+    margin-left: 1rem;
+}
+
+/* ---- header: roles & rates + profitability ---- */
+.header-box {
+    height: 100%;
+    overflow-x: auto;
+}
+
+.header-box .role-col {
+    min-width: 160px;
+}
+
+.header-box table.roles-grid {
+    width: 100%;
+    min-width: 0;
+}
+
+.muted {
+    color: #6b6d70;
+}
+
+.target-wrap {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.target-wrap .rate {
+    width: 56px;
+}
+
+.kpis {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.5rem;
+}
+
+.kpi {
+    background: #f3f6f9;
+    border-radius: 6px;
+    padding: 0.4rem 0.6rem;
+}
+
+.kpi-label {
+    font-size: 0.7rem;
+    color: #6b6d70;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.kpi-value {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #181818;
+}
+
+.margin {
+    font-weight: 700;
+    padding: 0 4px;
+    border-radius: 4px;
+}
+
+.margin-good {
+    color: #2e844a;
+}
+
+.margin-warn {
+    color: #a96404;
+}
+
+.margin-bad {
+    color: #ba0517;
+}
+
+.margin-none {
+    color: #6b6d70;
+    font-weight: 400;
+}

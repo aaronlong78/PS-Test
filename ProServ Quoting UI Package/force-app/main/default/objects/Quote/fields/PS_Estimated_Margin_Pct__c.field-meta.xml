@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>PS_Estimated_Margin_Pct__c</fullName>
+    <label>PS Estimated Margin %</label>
+    <description>Estimated gross margin % over resources that have a cost book entry. Written by psQuoteBuilder.</description>
+    <precision>5</precision>
+    <scale>2</scale>
+    <required>false</required>
+    <type>Percent</type>
+</CustomField>

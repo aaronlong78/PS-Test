@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Resource_Slot__c</fullName>
+    <description>Ordinal of this role within its phase (1 = first copy). The same role + slot across phases maps to the same quote line.</description>
+    <label>Resource Slot</label>
+    <precision>4</precision>
+    <scale>0</scale>
+    <required>false</required>
+    <type>Number</type>
+    <unique>false</unique>
+</CustomField>

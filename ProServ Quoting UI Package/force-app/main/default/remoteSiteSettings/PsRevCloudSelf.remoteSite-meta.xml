@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RemoteSiteSetting xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>Allows PsQuoteService to call this org's Revenue Cloud Connect APIs (same-org callout).</description>
+    <disableProtocolSecurity>false</disableProtocolSecurity>
+    <isActive>true</isActive>
+    <url>https://trailsignup-d311178303da90.my.salesforce.com</url>
+</RemoteSiteSetting>

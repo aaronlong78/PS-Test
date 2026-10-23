@@ -1,0 +1,43 @@
+.lookup {
+    position: relative;
+    width: 100%;
+}
+
+.dropdown {
+    position: absolute;
+    z-index: 9000;
+    top: 100%;
+    left: 0;
+    right: 0;
+    max-height: 240px;
+    overflow-y: auto;
+    background: #fff;
+    border: 1px solid #c9c9c9;
+    border-radius: 0 0 4px 4px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    margin: 0;
+    padding: 2px 0;
+    list-style: none;
+}
+
+.item {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 5px 10px;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.item:hover {
+    background: #f3f3f3;
+}
+
+.item .rate {
+    color: #6b6d70;
+}
+
+.item.muted {
+    color: #6b6d70;
+    cursor: default;
+}
